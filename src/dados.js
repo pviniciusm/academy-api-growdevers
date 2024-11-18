@@ -1,13 +1,15 @@
+import { randomUUID } from 'crypto';
+
 export const growdevers = [
     {
-        id: 1,
+        id: randomUUID(),
         nome: "Daphne",
         email: "daphne@dog.com",
         idade: 20,
         matriculado: true
     },
     {
-        id: 2,
+        id: randomUUID(),
         nome: "Joao",
         email: "joao@gmail.com",
         idade: 30,
