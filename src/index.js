@@ -9,11 +9,23 @@ const app = express();
 app.use(express.json());
 
 // GET /growdevers - Listar growdevers
+//     /growdevers?idade=20
 app.get("/growdevers", (req, res) => {
+    const { idade, nome } = req.query;
+
+    let dados = growdevers;
+    if(idade) {
+        dados = dados.filter(item => item.idade === Number(idade));
+    }
+
+    if(nome) {
+        dados = dados.filter(item => item.nome.includes(nome));
+    }
+
     res.status(200).send({
         ok: true,
         mensagem: "Growdevers listados com sucesso",
-        dados: growdevers
+        dados
     });
 });
 
