@@ -8,7 +8,6 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Criar nossas rotas
 // GET /growdevers - Listar growdevers
 app.get("/growdevers", (req, res) => {
     res.status(200).send({
@@ -18,6 +17,7 @@ app.get("/growdevers", (req, res) => {
     });
 });
 
+// POST /growdevers - Criar um growdever
 app.post("/growdevers", (req, res) => {
     // 1- entrada
     const body = req.body;
