@@ -111,6 +111,29 @@ app.put("/growdevers/:id", (req, res) => {
     });
 });
 
+// PATCH /growdevers/:id - Toggle do campo matriculado
+app.patch("/growdevers/:id", (req, res) => {
+    // 1 entrada
+    const { id } = req.params;
+
+    // 2 processamento
+    const growdever = growdevers.find(item => item.id === id);
+    if(!growdever) {
+        return res.status(404).send({
+            ok: false,
+            mensagem: "Growdever não encontrado"
+        })
+    }
+
+    growdever.matriculado = !growdever.matriculado;
+
+    // 3 saida
+    res.status(200).send({
+        ok: true,
+        mensagem: "Growdever atualizado (matricula) com sucesso",
+        dados: growdevers
+    });
+});
 
 const porta = process.env.PORT;
 app.listen(porta, () => {
