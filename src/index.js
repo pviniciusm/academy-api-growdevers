@@ -41,6 +41,28 @@ app.post("/growdevers", (req, res) => {
     })
 });
 
+// GET /growdevers/:id - Obter um growdever pelo seu ID
+app.get("/growdevers/:id", (req, res) => {
+    // 1 entrada
+    const { id } = req.params;
+
+    // 2 processamento
+    const growdever = growdevers.find((item) => item.id === id);
+    if(!growdever) {
+        return res.status(404).send({
+            ok: false,
+            mensagem: "Growdever não encontrado"
+        });
+    }
+
+    // 3 saida
+    res.status(200).send({
+        ok: true,
+        mensagem: "Growdever obtido com sucesso",
+        dados: growdever
+    });
+});
+
 const porta = process.env.PORT;
 app.listen(porta, () => {
     console.log("O servidor está executando na porta " + porta);
