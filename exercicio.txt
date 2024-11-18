@@ -1,0 +1,7 @@
+[EXERCICIO]
+
+1. Crie um servidor Node.js com express e crie duas rotas simples:
+    1. GET /hello
+        1. Retorna uma string simples com uma mensagem de boas vindas
+    2. GET /about
+        1. Retorna um JSON com as suas informações de perfil (nome, email, resumo do perfil, idade, lista de skills)
