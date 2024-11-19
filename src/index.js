@@ -2,7 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import { growdevers } from './dados.js';
 import { randomUUID } from 'crypto';
-import { logMiddleware, logRequestMiddleware } from './middlewares.js'
+import { logMiddleware, logRequestMiddleware, validateGrowdeverMiddleware } from './middlewares.js'
 
 dotenv.config();
 
@@ -39,38 +39,10 @@ app.get("/growdevers", [logMiddleware, logRequestMiddleware], (req, res) => {
 });
 
 // POST /growdevers - Criar um growdever
-app.post("/growdevers", [logMiddleware], (req, res) => {
+app.post("/growdevers", [logMiddleware, validateGrowdeverMiddleware], (req, res) => {
     try {
         // 1- entrada
         const body = req.body;
-
-        if(!body.nome) {
-            return res.status(400).send({
-                ok: false,
-                mensagem: "O campo nome não foi informado."
-            })
-        }
-
-        if(!body.email) {
-            return res.status(400).send({
-                ok: false,
-                mensagem: "O campo e-mail não foi informado."
-            })
-        }
-
-        if(!body.idade) {
-            return res.status(400).send({
-                ok: false,
-                mensagem: "O campo idade não foi informado."
-            })
-        }
-
-        if(Number(body.idade) < 18) {
-            return res.status(400).send({
-                ok: false,
-                mensagem: "O growdever deve ser maior de idade (maior ou igual a 18 anos)."
-            })
-        }
 
         const novoGrowdever = {
             id: randomUUID(),
@@ -121,7 +93,7 @@ app.get("/growdevers/:id", [logRequestMiddleware], (req, res) => {
 });
 
 // PUT /growdevers/:id - Atualizar um growdever especifico
-app.put("/growdevers/:id", (req, res) => {
+app.put("/growdevers/:id", [validateGrowdeverMiddleware], (req, res) => {
     // 1 entrada
     const { id } = req.params;
     const { nome, email, idade, matriculado } = req.body;
