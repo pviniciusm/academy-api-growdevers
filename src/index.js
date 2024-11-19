@@ -5,11 +5,14 @@ import { randomUUID } from 'crypto';
 import { logMiddleware, logRequestMiddleware, 
     validateGrowdeverMiddleware, logBody,
     validateGrowdeverMatriculadoMiddleware } from './middlewares.js'
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors());
+
 app.use(logMiddleware);
 
 // GET /growdevers - Listar growdevers
