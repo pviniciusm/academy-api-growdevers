@@ -2,6 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import { growdevers } from './dados.js';
 import { randomUUID } from 'crypto';
+import { logMiddleware, logRequestMiddleware } from './middlewares.js'
 
 dotenv.config();
 
@@ -10,7 +11,7 @@ app.use(express.json());
 
 // GET /growdevers - Listar growdevers
 //     /growdevers?idade=20
-app.get("/growdevers", (req, res) => {
+app.get("/growdevers", [logMiddleware, logRequestMiddleware], (req, res) => {
     const { idade, nome, email, email_includes } = req.query;
 
     let dados = growdevers;
@@ -38,31 +39,67 @@ app.get("/growdevers", (req, res) => {
 });
 
 // POST /growdevers - Criar um growdever
-app.post("/growdevers", (req, res) => {
-    // 1- entrada
-    const body = req.body;
+app.post("/growdevers", [logMiddleware], (req, res) => {
+    try {
+        // 1- entrada
+        const body = req.body;
 
-    const novoGrowdever = {
-        id: randomUUID(),
-        nome: body.nome,
-        email: body.email,
-        idade: body.idade,
-        matriculado: body.matriculado
-    }
+        if(!body.nome) {
+            return res.status(400).send({
+                ok: false,
+                mensagem: "O campo nome não foi informado."
+            })
+        }
 
-    // 2- processamento
-    growdevers.push(novoGrowdever);
+        if(!body.email) {
+            return res.status(400).send({
+                ok: false,
+                mensagem: "O campo e-mail não foi informado."
+            })
+        }
 
-    // 3- saida
-    res.status(201).send({
-        ok: true,
-        mensagem: "Growdever criado com sucesso",
-        dados: growdevers
-    })
+        if(!body.idade) {
+            return res.status(400).send({
+                ok: false,
+                mensagem: "O campo idade não foi informado."
+            })
+        }
+
+        if(Number(body.idade) < 18) {
+            return res.status(400).send({
+                ok: false,
+                mensagem: "O growdever deve ser maior de idade (maior ou igual a 18 anos)."
+            })
+        }
+
+        const novoGrowdever = {
+            id: randomUUID(),
+            nome: body.nome,
+            email: body.email,
+            idade: body.idade,
+            matriculado: body.matriculado
+        }
+
+        // 2- processamento
+        growdevers.push(novoGrowdever);
+
+        // 3- saida
+        res.status(201).send({
+            ok: true,
+            mensagem: "Growdever criado com sucesso",
+            dados: growdevers
+        });
+    } catch(error) {
+        console.log(error);
+        res.status(500).send({
+            ok: false,
+            mensagem: error.toString()
+        });
+    }    
 });
 
 // GET /growdevers/:id - Obter um growdever pelo seu ID
-app.get("/growdevers/:id", (req, res) => {
+app.get("/growdevers/:id", [logRequestMiddleware], (req, res) => {
     // 1 entrada
     const { id } = req.params;
 
