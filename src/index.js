@@ -178,5 +178,5 @@ app.delete("/growdevers/:id", (req, res) => {
 
 const porta = process.env.PORT;
 app.listen(porta, () => {
-    console.log("O servidor está executando na porta " + porta);
+    console.log("O servidor está executando na porta: " + porta);
 });
