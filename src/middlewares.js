@@ -1,3 +1,5 @@
+import { growdevers } from "./dados.js";
+
 export const logMiddleware = (req, res, next) => {
     console.log("Hello middleware!!");
 
@@ -10,6 +12,11 @@ export const logRequestMiddleware = (req, res, next) => {
     console.log(req.ip);
     console.log(req.body);
     
+    next();
+}
+
+export const logBody = (req, res, next) => {
+    console.log(req.body);
     next();
 }
 
@@ -53,6 +60,33 @@ export const validateGrowdeverMiddleware = (req, res, next) => {
         });
     }
 }
+
+export const validateGrowdeverMatriculadoMiddleware = (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const growdever = growdevers.find(item => item.id === id);
+        if(!growdever) {
+            return next();
+        }
+
+        if(!growdever.matriculado) {
+            return res.status(400).send({
+                ok: false,
+                mensagem: "Growdever não matriculado não pode realizar atualizações." 
+            });
+        }
+
+        next();
+    } catch (error) {
+        return res.status(500).send({
+            ok: false,
+            mensagem: error.toString()
+        });
+    }
+}
+
+
 
 // REQUEST ---> ROTA DA API
 

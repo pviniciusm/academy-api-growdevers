@@ -2,16 +2,19 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import { growdevers } from './dados.js';
 import { randomUUID } from 'crypto';
-import { logMiddleware, logRequestMiddleware, validateGrowdeverMiddleware } from './middlewares.js'
+import { logMiddleware, logRequestMiddleware, 
+    validateGrowdeverMiddleware, logBody,
+    validateGrowdeverMatriculadoMiddleware } from './middlewares.js'
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(logMiddleware);
 
 // GET /growdevers - Listar growdevers
 //     /growdevers?idade=20
-app.get("/growdevers", [logMiddleware, logRequestMiddleware], (req, res) => {
+app.get("/growdevers", [logRequestMiddleware], (req, res) => {
     const { idade, nome, email, email_includes } = req.query;
 
     let dados = growdevers;
@@ -39,7 +42,7 @@ app.get("/growdevers", [logMiddleware, logRequestMiddleware], (req, res) => {
 });
 
 // POST /growdevers - Criar um growdever
-app.post("/growdevers", [logMiddleware, validateGrowdeverMiddleware], (req, res) => {
+app.post("/growdevers", [logBody, validateGrowdeverMiddleware], (req, res) => {
     try {
         // 1- entrada
         const body = req.body;
@@ -93,7 +96,9 @@ app.get("/growdevers/:id", [logRequestMiddleware], (req, res) => {
 });
 
 // PUT /growdevers/:id - Atualizar um growdever especifico
-app.put("/growdevers/:id", [validateGrowdeverMiddleware], (req, res) => {
+app.put("/growdevers/:id", 
+    [logBody, validateGrowdeverMiddleware, validateGrowdeverMatriculadoMiddleware], 
+    (req, res) => {
     // 1 entrada
     const { id } = req.params;
     const { nome, email, idade, matriculado } = req.body;
